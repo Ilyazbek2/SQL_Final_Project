@@ -1,0 +1,91 @@
+WITH quarters AS (
+
+    SELECT
+
+        CONCAT(
+            YEAR(t.date_new),
+            '-Q',
+            QUARTER(t.date_new)
+        ) AS period,
+
+        CASE
+            WHEN c.Age IS NULL THEN 'NA'
+
+            ELSE CONCAT(
+                FLOOR(c.Age / 10) * 10,
+                '-',
+                FLOOR(c.Age / 10) * 10 + 9
+            )
+        END AS age_group,
+
+        SUM(t.Sum_payment) AS amount,
+
+        COUNT(DISTINCT t.Id_check) AS operations
+
+    FROM Transactions t
+
+    LEFT JOIN Customers c
+        ON t.ID_client = c.Id_client
+
+    GROUP BY
+        period,
+        age_group
+)
+
+SELECT
+
+    period,
+
+    age_group,
+
+    -- Average check
+    ROUND(
+        amount / operations,
+        2
+    ) AS avg_check,
+
+    -- Average monthly amount
+    ROUND(
+        amount /
+        CASE period
+            WHEN '2015-Q2' THEN 1
+            WHEN '2016-Q2' THEN 2
+            ELSE 3
+        END,
+        2
+    ) AS avg_monthly_amount,
+
+    -- Average monthly operations
+    ROUND(
+        operations /
+        CASE period
+            WHEN '2015-Q2' THEN 1
+            WHEN '2016-Q2' THEN 2
+            ELSE 3
+        END,
+        2
+    ) AS avg_monthly_operations,
+
+    -- Spending percentage
+    ROUND(
+        amount * 100.0 /
+        SUM(amount) OVER (
+            PARTITION BY period
+        ),
+        2
+    ) AS amount_pct,
+
+    -- Operations percentage
+    ROUND(
+        operations * 100.0 /
+        SUM(operations) OVER (
+            PARTITION BY period
+        ),
+        2
+    ) AS operations_pct
+
+FROM quarters
+
+ORDER BY
+    period,
+    age_group;
