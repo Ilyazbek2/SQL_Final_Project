@@ -1,0 +1,22 @@
+SELECT
+    DATE_FORMAT(date_new, '%Y-%m') AS month,
+
+    ROUND(
+        100.0 *
+        COUNT(DISTINCT Id_check) /
+        SUM(COUNT(DISTINCT Id_check)) OVER (),
+        2
+    ) AS operations_pct,
+
+    ROUND(
+        100.0 *
+        SUM(Sum_payment) /
+        SUM(SUM(Sum_payment)) OVER (),
+        2
+    ) AS spending_pct
+
+FROM Transactions
+
+GROUP BY month
+
+ORDER BY month;
