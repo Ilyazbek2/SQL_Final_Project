@@ -1,0 +1,30 @@
+SELECT
+    ID_client,
+
+    -- Average check
+    ROUND(
+        SUM(Sum_payment) / COUNT(DISTINCT Id_check),
+        2
+    ) AS avg_check,
+
+    -- Average monthly spending
+    ROUND(
+        SUM(Sum_payment) / 12,
+        2
+    ) AS avg_monthly_spending,
+
+    -- Total number of operations
+    COUNT(DISTINCT Id_check) AS total_operations
+
+FROM Transactions
+
+WHERE date_new >= '2015-06-01'
+  AND date_new < '2016-06-01'
+
+GROUP BY ID_client
+
+HAVING COUNT(
+    DISTINCT DATE_FORMAT(date_new, '%Y-%m')
+) = 12
+
+ORDER BY ID_client;
