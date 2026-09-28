@@ -1,0 +1,12 @@
+SELECT
+    ROUND(AVG(clients), 2) AS avg_monthly_clients
+
+FROM (
+    SELECT
+        DATE_FORMAT(date_new, '%Y-%m') AS month,
+        COUNT(DISTINCT ID_client) AS clients
+
+    FROM Transactions
+
+    GROUP BY month
+) AS monthly;
