@@ -106,8 +106,3 @@ The project demonstrates the use of:
 - DISTINCT
 - Window functions
 - Aggregate functions
-
-## Project Structure
-
-└── data/
-    └── README.md
