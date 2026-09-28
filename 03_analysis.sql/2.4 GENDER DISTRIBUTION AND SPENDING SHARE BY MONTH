@@ -1,0 +1,34 @@
+SELECT
+    DATE_FORMAT(t.date_new, '%Y-%m') AS month,
+
+    COALESCE(
+        NULLIF(TRIM(c.Gender), ''),
+        'NA'
+    ) AS gender,
+
+    -- Percentage of clients
+    ROUND(
+        COUNT(DISTINCT t.ID_client) * 100.0 /
+        SUM(COUNT(DISTINCT t.ID_client)) OVER (
+            PARTITION BY DATE_FORMAT(t.date_new, '%Y-%m')
+        ),
+        2
+    ) AS clients_pct,
+
+    -- Percentage of spending
+    ROUND(
+        SUM(t.Sum_payment) * 100.0 /
+        SUM(SUM(t.Sum_payment)) OVER (
+            PARTITION BY DATE_FORMAT(t.date_new, '%Y-%m')
+        ),
+        2
+    ) AS spending_pct
+
+FROM Transactions t
+
+LEFT JOIN Customers c
+    ON t.ID_client = c.Id_client
+
+GROUP BY month, gender
+
+ORDER BY month, gender;
