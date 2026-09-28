@@ -1,0 +1,10 @@
+SELECT
+    DATE_FORMAT(date_new, '%Y-%m') AS month,
+
+    COUNT(DISTINCT Id_check) AS monthly_operations
+
+FROM Transactions
+
+GROUP BY month
+
+ORDER BY month;
