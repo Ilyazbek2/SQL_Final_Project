@@ -1,0 +1,14 @@
+SELECT
+    DATE_FORMAT(date_new, '%Y-%m') AS month,
+
+    ROUND(
+        SUM(Sum_payment) /
+        COUNT(DISTINCT Id_check),
+        2
+    ) AS avg_check
+
+FROM Transactions
+
+GROUP BY month
+
+ORDER BY month;
