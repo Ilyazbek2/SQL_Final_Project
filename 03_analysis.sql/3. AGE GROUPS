@@ -1,0 +1,27 @@
+SELECT
+
+    CASE
+        WHEN c.Age IS NULL THEN 'NA'
+
+        ELSE CONCAT(
+            FLOOR(c.Age / 10) * 10,
+            '-',
+            FLOOR(c.Age / 10) * 10 + 9
+        )
+    END AS age_group,
+
+    ROUND(
+        SUM(t.Sum_payment),
+        2
+    ) AS total_amount,
+
+    COUNT(DISTINCT t.Id_check) AS operations
+
+FROM Transactions t
+
+LEFT JOIN Customers c
+    ON t.ID_client = c.Id_client
+
+GROUP BY age_group
+
+ORDER BY age_group;
